@@ -1,0 +1,49 @@
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <LiquidCrystal.h>
+
+// DS18B20 pin configuration
+#define ONE_WIRE_BUS 8  // Data pin of DS18B20 connected to pin 8
+
+// Setup a oneWire instance to communicate with any OneWire devices
+OneWire oneWire(ONE_WIRE_BUS);
+
+// Pass oneWire reference to DallasTemperature library
+DallasTemperature sensors(&oneWire);
+
+// LCD pin configuration
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+void setup() {
+  // Start serial communication for debugging
+  Serial.begin(9600);
+
+  // Start LCD
+  lcd.begin(16, 2);  // Initialize a 16x2 LCD display
+
+  // Print initial message on LCD
+  lcd.print("Temperature:");
+
+  // Start the DS18B20 sensor
+  sensors.begin();
+}
+
+void loop() {
+  // Request temperature readings from sensor
+  sensors.requestTemperatures();
+  
+  // Read temperature in Celsius
+  float temperatureC = sensors.getTempCByIndex(0);
+
+  // Print temperature to Serial Monitor
+  Serial.print("Temperature: ");
+  Serial.println(temperatureC);
+
+  // Display temperature on LCD
+  lcd.setCursor(0, 1); // Move to second line
+  lcd.print(temperatureC);
+  lcd.print(" C");
+
+  // Wait for a second before the next reading
+  delay(1000);
+}
